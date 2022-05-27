@@ -1,0 +1,575 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+    <meta name="generator" content="Hugo 0.88.1">
+    <title>智能系统实验演示</title>
+
+
+
+
+    <!-- Bootstrap core CSS -->
+<link href="static/assets/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+      .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        user-select: none;
+      }
+
+      @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+          font-size: 3.5rem;
+        }
+      }
+    </style>
+    <!-- Custom styles for this template -->
+    <link href="static/dashboard.css" rel="stylesheet">
+    <link href="static/index.css" rel="stylesheet">
+  </head>
+  <body>
+
+    <header class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
+      <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="#">智能系统实验</a>
+      <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <input class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search">
+      <div class="navbar-nav">
+        <div class="nav-item text-nowrap">
+          <a class="nav-link px-3" href="/preview">预览</a>
+        </div>
+      </div>
+    </header>
+
+    <!--  menu  -->
+    <div class="container-fluid">
+      <div class="row">
+        <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+          <div class="position-sticky pt-3">
+            <div a class="nav-link active" >
+              <span data-feather="home"></span>
+                <span>数据库</span>
+            </div>
+            <ul class="nav flex-column mb-2">
+              <li class="nav-item">
+                <a class="nav-link" href="?name=user">
+                  <span data-feather="file-text"></span>
+                  用户管理
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="?name=car">
+                  <span data-feather="file-text"></span>
+                  车流量管理
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="?name=weather">
+                  <span data-feather="file-text"></span>
+                  天气管理
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="?name=results">
+                  <span data-feather="file-text"></span>
+                  推理结果
+                </a>
+              </li>
+            </ul>
+
+            <div a class="nav-link active" >
+              <span data-feather="home"></span>
+                <span>知识库</span>
+            </div>
+            <ul class="nav flex-column mb-2">
+              <li class="nav-item">
+                <a class="nav-link" href="?name=rule">
+                  <span data-feather="file-text"></span>
+                  可信度知识管理
+                </a>
+              </li>
+            </ul>
+            <ul class="nav flex-column mb-2">
+              <li class="nav-item">
+                <a class="nav-link" href="?name=fuzzy_knowledge">
+                  <span data-feather="file-text"></span>
+                  模糊知识管理
+                </a>
+              </li>
+            </ul>
+            <div a class="nav-link active" >
+              <span data-feather="home"></span>
+                <span><a href="/preview">仿真系统预览</a></span>
+            </div>
+          </div>
+        </nav>
+
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+          <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+            <h1 id="sub_menu_title" class="h2" menu_name="{{menu_name}}">{{sub_menu}}</h1>
+            <div class="btn-toolbar mb-2 mb-md-0">
+              <div class="btn-group me-2">
+                {% if menu_name == 'user' %}
+                <button id="add_user_modal_show_btn" type="button" class="btn btn-sm btn-outline-secondary" >添加</button>
+                {% end %}
+              </div>
+              <div class="btn-group me-2">
+                {% if menu_name == 'car' %}
+                <button id="add_car_modal_show_btn" type="button" class="btn btn-sm btn-outline-secondary" >添加</button>
+                {% end %}
+              </div>
+              <div class="btn-group me-2">
+                {% if menu_name == 'rule' %}
+                <button id="add_rule_modal_show_btn" type="button" class="btn btn-sm btn-outline-secondary" >添加知识</button>
+                {% end %}
+              </div>
+              <div class="btn-group me-2">
+                {% if menu_name == 'fuzzy_knowledge' %}
+                <button id="add_fuzzy_btn" type="button" class="btn btn-sm btn-outline-secondary" >添加</button>
+                {% end %}
+              </div>
+              <div class="btn-group me-2">
+              {% if menu_name == 'weather' %}
+                <button id="set_weather_button" type="button" class="btn btn-sm btn-outline-secondary" >设置</button>
+              {% end %}
+              </div>
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="table table-striped table-sm">
+              <thead>
+                <tr>
+                  {% if menu_name == 'rule' %}
+                    <th scope="col">#</th>
+                    <th scope="col">前提</th>
+                    <th scope="col">结论</th>
+                    <th scope="col">前提可信度</th>
+                    <th scope="col">知识可信度</th>
+                  {% elif menu_name == 'car' %}
+                    <th scope="col">#</th>
+                    <th scope="col">方向</th>
+                    <th scope="col">车流量</th>
+                    <th scope="col">时间</th>
+                  {% elif menu_name == 'fuzzy_knowledge' %}
+                    <th scope="col">#</th>
+                    <th scope="col">名称</th>
+                    <th scope="col">输出参数隶属度</th>
+                    <th scope="col">模糊矩阵</th>
+                    <!-- 不在这里展示 -->
+                  {% elif menu_name == 'weather' %}
+                    <h1>天气</h1>
+                  {% elif menu_name == 'results' %}
+                    <th scope="col">#</th>
+                    <th scope="col">时间</th>
+                    <th scope="col">推理结果</th>
+                    <th scope="col" class="opttd">操作</th>
+                  {% else %}
+                    <th scope="col">#</th>
+                    <th scope="col">姓名</th>
+                    <th scope="col" class="opttd">操作</th>
+                  {% end %}
+                </tr>
+              </thead>
+              <tbody>
+              {% if menu_name == 'user' %}
+                 {% for index,element in enumerate(entitys) %}
+                 <tr>
+                    <th scope="row">{{index+1}}</th>
+                    <td>{{element.name}}</td>
+                   <td class="opttd">
+                     <a class="optbtn" opttype = "editUser" dataId = "{{element.id}}" username = "{{element.name}}">编辑</a>
+                     <a class="optbtn"  opttype = "deleteUser" dataId = "{{element.id}}" username = "{{element.name}}">删除</a>
+                   </td>
+                  </tr>
+                  {% end %}
+              {% end %}
+              <!-- 展示车流量-->
+              {% if menu_name == 'car' %}
+                 {% for index,element in enumerate(entitys) %}
+                 <tr>
+                   <th scope="row">{{index+1}}</th>
+                   <td>{{element.direction}}</td>
+                   <td>{{element.flow}}</td>
+                   <td>{{element.time}}</td>
+                   <td class="opttd">
+                       <a class="optbtn2" opttype = "editCar" dataId = "{{element.id}}" direction = "{{element.direction}}" flow = "{{element.flow}}" time = "{{element.time}}">编辑</a>
+                       <a class="optbtn2"  opttype = "deleteCar" dataId = "{{element.id}}" direction = "{{element.direction}}" flow = "{{element.flow}}" time = "{{element.time}}">删除</a>
+                   </td>
+                  </tr>
+                  {% end %}
+              {% end %}
+              <!--       天气       -->
+              {% if menu_name == 'weather' %}
+              <div>
+                <p>rain: {{entitys.rain}}</p>
+                <p>snow: {{entitys.snow}}</p>
+                <p>wind: {{entitys.wind}}</p>
+              </div>
+              {% end %}
+               <!-- 展示知识-->
+              {% if menu_name == 'rule' %}
+                 {% for index,element in enumerate(entitys) %}
+                 <tr>
+                   <th scope="row">{{index+1}}</th>
+                   <td>{{element.E}}</td>
+                   <td>{{element.H}}</td>
+                   <td>{{element.CFE}}</td>
+                   <td>{{element.CFHE}}</td>
+                   <td class="opttd">
+                       <a class="optbtn3" opttype = "editRule" dataId = "{{element.id}}" E = "{{element.E}}" H = "{{element.H}}" CFE = "{{element.CFE}}" CFHE = "{{element.CFHE}}">编辑</a>
+                       <a class="optbtn3"  opttype = "deleteRule" dataId = "{{element.id}}" >删除</a>
+                   </td>
+                  </tr>
+                  {% end %}
+              {% end %}
+               <!-- 模糊知识-->
+              {% if menu_name == 'fuzzy_knowledge' %}
+                {% for index,element in enumerate(entitys) %}
+                  <tr>
+                   <th scope="row">{{element.id}}</th>
+                   <td>{{element.name}}</td>
+                   <td>{{element.map_input_2_membership_vec}}</td>
+                   <td>{{element.matrix_r}}</td>
+                  </tr>
+                {% end %}
+              {% end %}
+
+               <!-- 推理结果-->
+              {% if menu_name == 'results' %}
+                {% for index,element in enumerate(entitys) %}
+                  <tr>
+                   <th scope="row">{{element.id}}</th>
+                   <td>{{element.time}}</td>
+                   <td>{{element.final_results}}</td>
+                   <td class="opttd">
+                       <a
+                         class="optbtn4"
+                         basePassTime = "{{element.base_pass_time}}"
+                         publicTime = "{{element.public_time}}"
+                         weatherRain = "{{element.weather_rain}}"
+                         weatherSnow = "{{element.weather_snow}}"
+                         weatherWind = "{{element.weather_wind}}"
+                         carNumbers = "{{element.car_numbers}}"
+                         publicAllocatedTimes = "{{element.public_allocated_times}}"
+                         weatherAddTimes = "{{element.weather_add_times}}"
+                       >
+                         详情
+                       </a>
+                   </td>
+                  </tr>
+                {% end %}
+              {% end %}
+              </tbody>
+            </table>
+          </div>
+        </main>
+      </div>
+    </div>
+{#添加用户#}
+    <div class="modal fade" id="add_user_modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">添加用户</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form>
+              <div class="mb-3">
+                <label for="fullname" class="col-form-label">姓名:</label>
+                <input type="text" class="form-control" id="fullname">
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+            <button type="button" class="btn btn-primary" id = "add_user_submit">提交</button>
+          </div>
+        </div>
+      </div>
+    </div>
+{#修改用户#}
+     <div class="modal fade" id="edit_user_modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" >编辑用户</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form>
+              <div class="mb-3">
+                <label for="fullname" class="col-form-label">姓名:</label>
+                <input type="text" class="form-control" id="edit_user_fullname">
+                <input type="hidden" class="form-control" id="edit_user_id">
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+            <button type="button" class="btn btn-primary" id = "edit_user_submit">提交</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+{#     添加车流量 #}
+    <div class="modal fade" id="add_car_modal" tabindex="-1" aria-labelledby="exampleModalLabel1" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel1">添加车流量</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form>
+              <div class="mb-3">
+                <label for="direction" class="col-form-label">方向:</label>
+                <input type="text" class="form-control" id="direction">
+              </div>
+              <div class="mb-3">
+                <label for="flow" class="col-form-label">车流量:</label>
+                <input type="text" class="form-control" id="flow">
+              </div>
+              <div class="mb-3">
+                <label for="time" class="col-form-label">时间:</label>
+                <input type="text" class="form-control" id="time">
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+            <button type="button" class="btn btn-primary" id = "add_car_submit">提交</button>
+          </div>
+        </div>
+      </div>
+    </div>
+{#<!--     编辑车流量-->#}
+    <div class="modal fade" id="edit_car_modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" >修改车流量</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form>
+              <div class="mb-3">
+                <label for="direction" class="col-form-label">方向:</label>
+                <input type="text" class="form-control" id="edit_car_direction">
+                <label for="flow" class="col-form-label">车流量:</label>
+                <input type="text" class="form-control" id="edit_car_flow">
+                <label for="time" class="col-form-label">时间:</label>
+                <input type="text" class="form-control" id="edit_car_time">
+                <input type="hidden" class="form-control" id="edit_car_id">
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+            <button type="button" class="btn btn-primary" id = "edit_car_submit">提交</button>
+          </div>
+        </div>
+      </div>
+    </div>
+<!--    添加知识-->
+     <div class="modal fade" id="add_rule_modal" tabindex="-1" aria-labelledby="exampleModalLabel1" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel2">开始添加知识</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form>
+              <div class="mb-3">
+                <label for="E" class="col-form-label">前提:</label>
+                <input type="text" class="form-control" id="E">
+              </div>
+              <div class="mb-3">
+                <label for="H" class="col-form-label">结论:</label>
+                <input type="text" class="form-control" id="H">
+              </div>
+              <div class="mb-3">
+                <label for="CFE" class="col-form-label">前提可信度:</label>
+                <input type="text" class="form-control" id="CFE">
+              </div>
+              <div class="mb-3">
+                <label for="CFHE" class="col-form-label">知识可信度:</label>
+                <input type="text" class="form-control" id="CFHE">
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+            <button type="button" class="btn btn-primary" id = "add_rule_submit">提交</button>
+          </div>
+        </div>
+      </div>
+    </div>
+<!--    编辑知识-->
+    <div class="modal fade" id="edit_rule_modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" >修改知识</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form>
+              <div class="mb-3">
+                <label for="E" class="col-form-label">前提:</label>
+                <input type="text" class="form-control" id="edit_rule_E">
+                <label for="H" class="col-form-label">结论:</label>
+                <input type="text" class="form-control" id="edit_rule_H">
+                <label for="CHE" class="col-form-label">前提可信度:</label>
+                <input type="text" class="form-control" id="edit_rule_CFE">
+                  <label for="CFHE" class="col-form-label">知识可信度:</label>
+                <input type="text" class="form-control" id="edit_rule_CFHE">
+                <input type="hidden" class="form-control" id="edit_rule_id">
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+            <button type="button" class="btn btn-primary" id ="edit_rule_submit">提交</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- 添加模糊知识-->
+     <div class="modal fade" id="add_fuzzy_modal" tabindex="-1" aria-labelledby="exampleModalLabel1" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">添加模糊知识</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form>
+              <div class="mb-3">
+                <label for="create_fuzzy_name" class="col-form-label">名称</label>
+                <input type="text" class="form-control" id="create_fuzzy_name">
+              </div>
+              <div class="mb-3">
+                <label for="create_fuzzy_input_var_desc" class="col-form-label">输入变量到隶属度矩阵</label>
+                <input type="text" class="form-control" id="create_fuzzy_input_var_desc">
+              </div>
+              <div class="mb-3">
+                <label for="create_fuzzy_output_var_desc" class="col-form-label">输出参数到隶属度矩阵</label>
+                <input type="text" class="form-control" id="create_fuzzy_output_var_desc">
+              </div>
+              <div class="mb-3">
+                <label for="create_fuzzy_input_output_relation" class="col-form-label">输入变量到输出参数推理关系</label>
+                <input type="text" class="form-control" id="create_fuzzy_input_output_relation">
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+            <button type="button" class="btn btn-primary" id = "add_fuzzy_submit">提交</button>
+          </div>
+        </div>
+      </div>
+    </div>
+        <!-- 添加天气-->
+     <div class="modal fade" id="add_weather" tabindex="-1" aria-labelledby="exampleModalLabel1" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">添加天气</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form>
+              <div class="mb-3">
+                <label for="create_fuzzy_input_var_desc" class="col-form-label">降雨量</label>
+                <input type="text" class="form-control" id="add_rain">
+              </div>
+              <div class="mb-3">
+                <label for="create_fuzzy_output_var_desc" class="col-form-label">降雪量</label>
+                <input type="text" class="form-control" id="add_snow">
+              </div>
+              <div class="mb-3">
+                <label for="create_fuzzy_input_output_relation" class="col-form-label">风俗</label>
+                <input type="text" class="form-control" id="add_wind">
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+            <button type="button" class="btn btn-primary" id = "add_weather_submit">提交</button>
+          </div>
+        </div>
+      </div>
+    </div>
+<!--    查看推理结果-->
+     <div class="modal fade" id="see_result" tabindex="-1" aria-labelledby="exampleModalLabel1" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-body">
+            <h1>推理支撑数据</h1>
+            <h2>天气</h2>
+            <form>
+              <div class="mb-3">
+                <label for="create_fuzzy_input_var_desc" class="col-form-label">降雨量</label>
+                <input type="text" class="form-control" id="result_weather_rain"></input>
+              </div>
+              <div class="mb-3">
+                <label for="create_fuzzy_output_var_desc" class="col-form-label">降雪量</label>
+                <input type="text" class="form-control" id="result_weather_snow"></input>
+              </div>
+              <div class="mb-3">
+                <label for="create_fuzzy_input_output_relation" class="col-form-label">风速</label>
+                <input type="text" class="form-control" id="result_weather_wind"></input>
+              </div>
+            </form>
+            <h2>车流</h2>
+            <form>
+              <div class="mb-3">
+                <label for="create_fuzzy_input_var_desc" class="col-form-label">各方向车流</label>
+                <input type="text" class="form-control" id="result_car_numbers"></input>
+              </div>
+            </form>
+            <h1>推理参数</h1>
+            <form>
+              <div class="mb-3">
+                <label for="create_fuzzy_input_var_desc" class="col-form-label">基础通过时长</label>
+                <input type="text" class="form-control" id="result_base_pass_time"></input>
+              </div>
+              <div class="mb-3">
+                <label for="create_fuzzy_input_var_desc" class="col-form-label">共享通过时间</label>
+                <input type="text" class="form-control" id="result_public_time"></input>
+              </div>
+            </form>>
+            <h1>推理过程</h1>
+            <form>
+              <div class="mb-3">
+                <label for="create_fuzzy_input_var_desc" class="col-form-label">获取共享时间</label>
+                <input type="text" class="form-control" id="result_allocated_public_time"></input>
+              </div>
+              <div class="mb-3">
+                <label for="create_fuzzy_input_var_desc" class="col-form-label">天气附加时间</label>
+                <input type="text" class="form-control" id="result_weather_add_time"></input>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="static/assets/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons@4.28.0/dist/feather.min.js" integrity="sha384-uO3SXW5IuS1ZpFPKugNNWqTZRRglnUJK6UAZ/gxOX80nxEkN9NcGZTftn6RzhGWE" crossorigin="anonymous"></script>
+    <script src="static/dashboard.js"></script>
+    <script src="static/dist/jquery-3.6.0.min.js"></script>
+    <script src="static/dist/index.js"></script>
+  </body>
+</html>

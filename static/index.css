@@ -1,0 +1,24 @@
+.optbtn{
+    width:50px;
+    color:blue;
+    cursor:pointer;
+    text-decoration-line: none;
+    -moz-text-decoration-line: none;
+}
+.optbtn2{
+    width:50px;
+    color:red;
+    cursor:pointer;
+    text-decoration-line: none;
+    -moz-text-decoration-line: none;
+}
+.optbtn3{
+    width:50px;
+    color: lawngreen;
+    cursor:pointer;
+    text-decoration-line: none;
+    -moz-text-decoration-line: none;
+}
+.opttd{
+    width:120px;
+}
